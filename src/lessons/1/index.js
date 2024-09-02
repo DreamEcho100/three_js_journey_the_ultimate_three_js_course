@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 /** @param {HTMLCanvasElement} canvas  */
-export function basicManipulations(canvas) {
+export function setup1(canvas) {
   // Scene
   const scene = new THREE.Scene();
 

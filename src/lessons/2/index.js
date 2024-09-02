@@ -2,7 +2,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 
 /** @param {HTMLCanvasElement} canvas  */
-export function basicAnimations(canvas) {
+export function setup1(canvas) {
   const scene = new THREE.Scene();
 
   const mesh = new THREE.Mesh(
@@ -22,7 +22,9 @@ export function basicAnimations(canvas) {
   };
 
   const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height);
-  camera.position.z = 10;
+  camera.position.x = 2;
+  camera.position.y = 2;
+  camera.position.z = 2;
   scene.add(camera);
 
   const renderer = new THREE.WebGLRenderer({ canvas });
