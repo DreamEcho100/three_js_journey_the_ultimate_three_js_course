@@ -1,5 +1,5 @@
+import { basicAnimations } from "./5-basic-animation copy/index.js";
 import "./style.css";
-import { setupCanvas } from "./canvas.js";
 
 const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
 
@@ -19,4 +19,4 @@ if (!canvas) {
   throw new Error("Canvas is not found");
 }
 
-setupCanvas(canvas);
+basicAnimations(canvas);
