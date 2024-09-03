@@ -1,4 +1,4 @@
-import { setup1 } from "./lessons/2";
+import { setup2 } from "./lessons/2";
 import "./style.css";
 
 const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
@@ -19,4 +19,4 @@ if (!canvas) {
   throw new Error("Canvas is not found");
 }
 
-setup1(canvas);
+setup2(canvas);
