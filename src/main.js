@@ -8,7 +8,7 @@ if (!appElement) {
 }
 
 appElement.innerHTML = `
-  <canvas id="webgl"></canvas>
+  <canvas id="webgl" style="width: 100%; height: 100%;"></canvas>
 `;
 
 const canvas = /** @type {HTMLCanvasElement | null} */ (
@@ -19,4 +19,4 @@ if (!canvas) {
   throw new Error("Canvas is not found");
 }
 
-setup2(canvas);
+setup2(canvas, appElement);

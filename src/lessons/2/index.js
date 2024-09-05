@@ -3,13 +3,82 @@ import gsap from "gsap";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 
-/** @param {HTMLCanvasElement} canvas  */
-export function setup2(canvas) {
+/**
+ * @param {HTMLCanvasElement} canvas
+ * @param {Element} container
+ */
+export function setup2(canvas, container) {
   // Sizes
   const sizes = {
     width: 800,
     height: 600,
   };
+  let aspectRatio = sizes.width / sizes.height;
+
+  /**
+   * What is happening here?
+   * We are creating a new ResizeObserver
+   * A ResizeObserver is an object that can observe changes to the size of an element
+   * And it can notify us when the size of the element changes
+   * We are creating a new ResizeObserver and we are passing a callback function to it
+   * This callback function will be called every time the size of the element changes
+   * And it will receive a list of entries
+   * Each entry will contain information about the element whose size has changed
+   * In our case, we are interested in the contentRect property of the entry
+   * The contentRect property contains the new size of the element
+   * And it has a width and a height property
+   * We are updating the sizes object with the new width and height
+   * And we are updating the aspectRatio variable with the new aspect ratio
+   * The aspect ratio is the ratio of the width to the height of the element
+   */
+  const canvasResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const { width, height } = entry.contentRect;
+      sizes.width = width;
+      sizes.height = height;
+      aspectRatio = width / height;
+
+      /**
+       * What is happening here?
+       * We are updating the size of the renderer
+       * The renderer is the object that will draw the scene from the camera's point of view
+       * And it will draw it on the canvas
+       *
+       * And we are updating the pixel ratio of the renderer
+       * The pixel ratio is the ratio of the size of a device's physical pixels to the size of its logical pixels
+       * And it is used to render high-resolution graphics on high-resolution displays
+       * We are setting the pixel ratio to the minimum of the device pixel ratio and 2
+       * This will ensure that the renderer will render high-resolution graphics on high-resolution displays
+       * But it will not render graphics at a higher resolution than 2 times the size of the logical pixels
+       * This is to prevent the renderer from rendering graphics at a higher resolution than the device can handle
+       * And it will ensure that the graphics will be rendered at a reasonable resolution
+       * The device pixel ratio could change if the user zooms in or out on the page or if having multiple monitors with different pixel densities connected to the computer and moving the window between them
+       *
+       * We are updating the aspect ratio of the camera
+       * The aspect ratio is the ratio of the width to the height of the camera
+       *
+       * And we are updating the projection matrix of the camera
+       * The projection matrix is a matrix that is used to project 3D coordinates into 2D coordinates
+       * And it is based on the aspect ratio of the camera
+       * So when we update the aspect ratio of the camera, we need to update the projection matrix
+       */
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      camera.aspect = aspectRatio;
+      camera.updateProjectionMatrix();
+    }
+  });
+
+  canvasResizeObserver.observe(container);
+
+  window.addEventListener("dblclick", () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      container.requestFullscreen();
+    }
+  });
+
   const cursor = { x: 0, y: 0 };
   const cursorPadding = 0.5;
 
@@ -51,7 +120,6 @@ export function setup2(canvas) {
   const axesHelper = new THREE.AxesHelper(1.5);
   cube.add(axesHelper);
 
-  const aspectRatio = sizes.width / sizes.height;
   const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 100);
   // const camera = new THREE.OrthographicCamera(
   //   -1 * aspectRatio,
@@ -78,6 +146,21 @@ export function setup2(canvas) {
 
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(sizes.width, sizes.height);
+  /**
+   * The pixel ratio is the ratio of the resolution of the canvas to the resolution of the screen
+   * The pixel ratio can be used to improve the quality of the graphics
+   * The pixel ratio must be between 1 and 2
+   * The pixel ratio can be changed by setting the renderer.pixelRatio property
+   * We are setting the pixel ratio to the minimum of the device pixel ratio and 2
+   * The device pixel ratio is the ratio of the resolution of the screen to the resolution of the canvas
+   * And it is usually 1, 2, or 3
+   * So we are setting the pixel ratio to the minimum of 2 and the device pixel ratio
+   * This will ensure that the pixel ratio is always between 1 and 2
+   */
+  renderer.pixelRatio = Math.min(window.devicePixelRatio, 2);
+
+  // canvas.style.width = "100%";
+  // canvas.style.height = "100%";
 
   gsap.to(cube.position, { x: 2, duration: 1, delay: 1 });
   gsap.to(cube.position, { x: -2, duration: 2, delay: 2 });
