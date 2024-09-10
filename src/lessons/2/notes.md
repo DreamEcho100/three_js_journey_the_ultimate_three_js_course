@@ -9,3 +9,5 @@
 ## In Three.js, near vs far for camera, how to set them properly and whe not to set them, common mistakes and how to avoid them, and how to calculate them, and how to set them dynamically, and how to set them for different camera types
 
 ## `ResizeObserver` vs `element.addEventListener('resize', ...)` vs `element.onresize` vs `window.addEventListener('resize', ...)` vs `window.onresize` vs `window.matchMedia(...).addListener(...)` vs `window.matchMedia(...).onchange` vs `window.matchMedia(...).addEventListener('change', ...)` vs `window.matchMedia(...).onchange`, the differences, how to set them properly and whe not to set them, common mistakes and how to avoid them
+
+## `Float32Array`, `BufferAttribute`, and `BufferGeometry` in Three.js, how to use them, when to use them, and how to optimize them

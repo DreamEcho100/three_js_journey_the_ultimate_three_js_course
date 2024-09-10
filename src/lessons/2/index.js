@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import gsap from "gsap";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import GUI from "lil-gui";
 // https://threejs.org/docs/#examples/en/controls/OrbitControls
 
 /**
@@ -9,10 +10,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
  */
 export function setup2(canvas, container) {
   // Sizes
-  const sizes = {
-    width: 800,
-    height: 600,
-  };
+  const sizes = { width: 800, height: 600 };
   let aspectRatio = sizes.width / sizes.height;
 
   /**
@@ -82,6 +80,35 @@ export function setup2(canvas, container) {
   const cursor = { x: 0, y: 0 };
   const cursorPadding = 0.5;
 
+  const gui = new GUI({
+    title: "Debug UI",
+    width: 300,
+    closeFolders: true,
+  });
+  gui.close();
+  gui.hide();
+
+  window.addEventListener("keydown", (event) => {
+    console.log("___ event.key", event.key);
+    if (event.ctrlKey && event.key.toLowerCase() === "h") {
+      event.preventDefault();
+      if (gui._hidden) {
+        gui.show();
+        return;
+      }
+
+      gui.hide();
+    }
+  });
+
+  const debugUIConfig = {
+    cubeColor: "#a778d8",
+    spinCube: () => {
+      gsap.to(cube.rotation, { y: cube.rotation.y + Math.PI * 2 });
+    },
+    cubeSubDivision: 2,
+  };
+
   window.addEventListener("pointermove", (event) => {
     /**
      * What is happening here?
@@ -112,13 +139,142 @@ export function setup2(canvas, container) {
 
   const cube = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+    new THREE.MeshBasicMaterial({ color: debugUIConfig.cubeColor }),
   );
-
   scene.add(cube);
+
+  const cubeTweaksUi = gui.addFolder("Cube");
+  cubeTweaksUi.add(cube.material, "wireframe");
+  cubeTweaksUi
+    .addColor(debugUIConfig, "cubeColor")
+    .onChange(
+      /** @param {string} value  */
+      (value) => {
+        cube.material.color.set(value);
+      },
+    )
+    .name("color");
+  cubeTweaksUi.add(debugUIConfig, "spinCube");
+  cubeTweaksUi
+    .add(debugUIConfig, "cubeSubDivision")
+    .name("sub division")
+    .min(1)
+    .max(20)
+    .step(1)
+    .onFinishChange(
+      /** @param {number} value  */
+      (value) => {
+        cube.geometry.dispose();
+        // prettier-ignore
+        cube.geometry = new THREE.BoxGeometry(
+          1, 1, 1,
+          value, value, value
+        );
+      },
+    );
 
   const axesHelper = new THREE.AxesHelper(1.5);
   cube.add(axesHelper);
+
+  /**
+   * What is happening here?
+   * We are creating a Float32Array
+   * A Float32Array is a typed array that can store 32-bit floating-point numbers
+   * And it is used to store the position of the vertices of a 3D object
+   * In this case, we are creating a Float32Array with 9 values
+   * Each group of 3 values represents the position of a vertex in 3D space
+   * And we are creating a triangle with 3 vertices
+   * The first vertex is at the origin (0, 0, 0)
+   * The second vertex is at (0, 1, 0)
+   * The third vertex is at (1, 0, 0)
+   * So we have a triangle with vertices at (0, 0, 0), (0, 1, 0), and (1, 0, 0)
+   * And we are storing these values in the positionArray
+   * And we will use this array to create a BufferAttribute
+   * And we will set this attribute to the geometry of the triangle
+   * So the geometry will know the position of the vertices of the triangle
+   * And it will use this information to render the triangle
+   */
+  // prettier-ignore
+  const positionArray = new Float32Array([
+      0, 0, 0, // vertex 1
+      0, 1, 0, // vertex 2
+      1, 0, 0, // vertex 3
+    ]);
+
+  /**
+   * What is happening here?
+   * We are creating a new BufferAttribute
+   * A BufferAttribute is an object that contains the data needed to render a 3D object
+   * And it is used to store the data in a typed array
+   * And it is used to update the data directly in the typed array
+   * Without having to create a new array every time
+   * We are creating a new BufferAttribute with the positionArray
+   * And we are setting the itemSize to 3
+   * The itemSize is the number of values for each vertex
+   * In this case, we have 3 values for each vertex (x, y, z)
+   * And we are setting the attribute to the geometry
+   * The attribute is the data that will be used to render the 3D object
+   * And we are setting the attribute to the position attribute of the geometry
+   * The position attribute is the data that will be used to position the vertices of the 3D object
+   * And we are creating a new BufferGeometry
+   * A BufferGeometry is an object that contains the data needed to render a 3D object
+   * And it is more efficient than using a Geometry object
+   * Because it allows us to store the data in a typed array
+   * And it allows us to update the data directly in the typed array
+   * Without having to create a new array every time
+   * We are setting the position attribute to the geometry
+   * The position attribute is the data that will be used to position the vertices of the 3D object
+   * And we are creating a new MeshBasicMaterial
+   * A MeshBasicMaterial is a material that will be used to render the 3D object
+   * And we are setting the color to red
+   * And we are setting the wireframe to true
+   * The wireframe is a mode that will render the 3D object as a wireframe
+   * And we are creating a new Mesh with the geometry and the material
+   * A Mesh is a 3D object that will be added to the scene
+   * And we are adding the mesh to the scene
+   */
+  const positionAttribute = new THREE.BufferAttribute(positionArray, 3);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", positionAttribute);
+
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true,
+  });
+  const triangle = new THREE.Mesh(geometry, material);
+  scene.add(triangle);
+
+  const triangleTweaksUi = gui.addFolder("Triangle");
+  triangleTweaksUi
+    .add(triangle.position, "y")
+    .min(-3)
+    .max(3)
+    .step(0.1)
+    .name("elevation");
+  triangleTweaksUi.add(triangle.position, "z").min(-3).max(3).step(0.1);
+  triangleTweaksUi.add(triangle, "visible");
+
+  const position2ArraySize = 50;
+  const position2Array = new Float32Array(position2ArraySize * 3 * 3);
+
+  for (let i = 0; i < position2Array.length; i++) {
+    position2Array[i] = (Math.random() - 0.4) * 4;
+  }
+
+  const position2Attribute = new THREE.BufferAttribute(position2Array, 3);
+  const geometry2 = new THREE.BufferGeometry();
+  geometry2.setAttribute("position", position2Attribute);
+
+  const triangle2 = new THREE.Mesh(
+    // new THREE.BufferGeometry(),
+    geometry2,
+    new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      wireframe: true,
+    }),
+  );
+  // triangle2.geometry.setAttribute("position", position2Attribute);
+  scene.add(triangle2);
 
   const camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 100);
   // const camera = new THREE.OrthographicCamera(
@@ -162,9 +318,9 @@ export function setup2(canvas, container) {
   // canvas.style.width = "100%";
   // canvas.style.height = "100%";
 
-  gsap.to(cube.position, { x: 2, duration: 1, delay: 1 });
-  gsap.to(cube.position, { x: -2, duration: 2, delay: 2 });
-  gsap.to(cube.position, { x: 0, duration: 1, delay: 4 });
+  gsap.to(triangle.position, { x: 2, duration: 1, delay: 1 });
+  gsap.to(triangle.position, { x: -2, duration: 2, delay: 2 });
+  gsap.to(triangle.position, { x: 0, duration: 1, delay: 4 });
 
   const clock = new THREE.Clock();
 

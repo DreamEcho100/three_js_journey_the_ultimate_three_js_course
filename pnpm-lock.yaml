@@ -11,6 +11,9 @@ importers:
       gsap:
         specifier: ^3.12.5
         version: 3.12.5
+      lil-gui:
+        specifier: ^0.19.2
+        version: 0.19.2
       three:
         specifier: ^0.168.0
         version: 0.168.0
@@ -276,6 +279,9 @@ packages:
   gsap@3.12.5:
     resolution: {integrity: sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==}
 
+  lil-gui@0.19.2:
+    resolution: {integrity: sha512-nU8j4ND702ouGfQZoaTN4dfXxacvGOAVK0DtmZBVcUYUAeYQXLQAjAN50igMHiba3T5jZyKEjXZU+Ntm1Qs6ZQ==}
+
   meshoptimizer@0.18.1:
     resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
 
@@ -506,6 +512,8 @@ snapshots:
     optional: true
 
   gsap@3.12.5: {}
+
+  lil-gui@0.19.2: {}
 
   meshoptimizer@0.18.1: {}
 
