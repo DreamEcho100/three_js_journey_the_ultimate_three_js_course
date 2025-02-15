@@ -2,7 +2,7 @@
  * @import { Texture, LoadingManager } from 'three';
  */
 
-import { TextureLoader } from 'three';
+import { TextureLoader } from "three";
 
 /**
  * @description
@@ -49,25 +49,25 @@ import { TextureLoader } from 'three';
  * @throws {Error}
  */
 function deriveTextureName(str) {
-	const segments = str.split('/');
-	const lastSegment = segments.pop()?.split('.')[0];
+	const segments = str.split("/");
+	const lastSegment = segments.pop()?.split(".")[0];
 
-	if (typeof lastSegment !== 'string' || segments.length < 2) {
+	if (typeof lastSegment !== "string" || segments.length < 2) {
 		throw new Error(
-			'Invalid path: Must have at least two segments before file name'
+			"Invalid path: Must have at least two segments before file name",
 		);
 	}
 
 	let name = lastSegment[0].toLowerCase() + lastSegment.slice(1);
 
-	let texturesIndex = segments.indexOf('textures');
+	let texturesIndex = segments.indexOf("textures");
 
 	// if (str.startsWith('/') && !str.includes('/textures/')) {
 	// 	throw new Error('Path must contain `/textures/` segment');
 	// }
 
 	if (texturesIndex === -1) {
-		throw new Error('Invalid path, no `textures` segment found');
+		throw new Error("Invalid path, no `textures` segment found");
 	}
 
 	for (let j = segments.length - 1; j > texturesIndex; j--) {
@@ -75,7 +75,7 @@ function deriveTextureName(str) {
 		name += segment[0].toUpperCase() + segment.slice(1);
 	}
 
-	return name + 'Texture';
+	return name + "Texture";
 }
 
 /**
@@ -126,24 +126,29 @@ function deriveTextureName(str) {
  * @template {string} Path
  * @template {([Path, Name] | [Path, Name, TextureLoadParamsExceptUrlAsAsRecord] | [Path] | [Path, TextureLoadParamsExceptUrlAsAsRecord] | Path)} ReturnItem
  *
- * @param {ReturnItem extends ([Path, Name] | [Path, Name, TextureLoadParamsExceptUrlAsAsRecord] | [Path] | [Path, TextureLoadParamsExceptUrlAsAsRecord] | Path)} item
+ * @param {ReturnItem} item
  * @param {TextureLoader} textureLoader
  * @returns {[name: string, texture: Texture]}
  * @throws {Error}
  */
 function loadTexture(item, textureLoader) {
-	let name = '';
-	let path = '';
+	let name = "";
+	let path = "";
 	let onLoad;
 	let onProgress;
 	let onError;
 
-	if (typeof item === 'string') {
+	if (typeof item === "string") {
 		name = deriveTextureName(item);
 		path = item;
-	} else if (!Array.isArray(item) || item.length === 0 || item.length > 3) {
+	} else if (
+		!Array.isArray(item) ||
+		// @ts-ignore
+		item.length === 0 ||
+		item.length > 3
+	) {
 		throw new Error(
-			`Invalid input shape for loadTexture: ${JSON.stringify(item)}`
+			`Invalid input shape for loadTexture: ${JSON.stringify(item)}`,
 		);
 	} else if (item.length === 1) {
 		name = deriveTextureName(item[0]);
@@ -151,7 +156,7 @@ function loadTexture(item, textureLoader) {
 	} else if (item.length === 2) {
 		path = item[0];
 
-		if (typeof item[1] === 'string') {
+		if (typeof item[1] === "string") {
 			name = item[1];
 		} else {
 			name = deriveTextureName(item[0]);
@@ -234,7 +239,7 @@ export function loadTextures_map(items, options) {
 		/** @type {TextureLoaderHandlerReturn<Name, Path, ReturnItem>} */ (
 			loadedItems
 		),
-		textureLoader
+		textureLoader,
 	];
 }
 
@@ -303,7 +308,7 @@ export function loadTextures_obj(items, options) {
 		/** @type {TextureLoaderHandlerReturnObject<Name, Path, ReturnItem>} */ (
 			loadedItems
 		),
-		textureLoader
+		textureLoader,
 	];
 }
 
@@ -315,8 +320,11 @@ Current shapes handled:
 - [Path, Name]: `['/textures/door/color.jpg', 'doorColorTexture']`
 - [Path, Name, TextureLoaderParamsExceptUrlAsRecord]: `['/textures/door/color.jpg', 'doorColorTexture', { onLoad: () => {} }]`
 
+Features to add/change
+- It should start building the `Name` starting from after the last occurrence of the word `textures` not the first appearance _(adn the TS should follow suit)_.
+- Other shapes to handle:
+	- [Path, TextureLoader & { name: Name }]: `['/textures/door/color.jpg', { name: 'doorColorTexture', onLoad: () => {} }]`
+	- { path: Path, name?: Name, ...TextureLoaderParamsExceptUrlAsRecord }: `{ path: '/textures/door/color.jpg', name: 'doorColorTexture', onLoad: () => {} }`
 
-Other shapes to handle:
-- [Path, TextureLoader & { name: Name }]: `['/textures/door/color.jpg', { name: 'doorColorTexture', onLoad: () => {} }]`
-- { path: Path, name?: Name, ...TextureLoaderParamsExceptUrlAsRecord }: `{ path: '/textures/door/color.jpg', name: 'doorColorTexture', onLoad: () => {} }`
+
 */
