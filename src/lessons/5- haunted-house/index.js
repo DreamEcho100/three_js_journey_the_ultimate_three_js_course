@@ -189,7 +189,7 @@ export function setup5(canvas, container) {
 	// /** @type {Mesh<SphereGeometry, MeshStandardMaterial>[]} */
 	// new Array(bushesConfig.length);
 	const bushes = new Group();
-	bushes;
+	scene.add(bushes);
 
 	for (const bushConfig of bushesConfig) {
 		const bush = new Mesh(bushSharedGeometry, bushSharedMaterial);
@@ -198,8 +198,6 @@ export function setup5(canvas, container) {
 		bush.receiveShadow = true;
 		bushes.add(bush);
 	}
-
-	scene.add(bushes);
 
 	// Graves
 	const gravesSharedGeometry = new BoxGeometry(0.6, 0.8, 0.2);
@@ -248,9 +246,9 @@ export function setup5(canvas, container) {
 	);
 	scene.add(floor);
 	floor.receiveShadow = true;
-	door.geometry.setAttribute(
+	floor.geometry.setAttribute(
 		"uv2",
-		new Float32BufferAttribute(door.geometry.attributes.uv.array, 2),
+		new Float32BufferAttribute(floor.geometry.attributes.uv.array, 2),
 	);
 	floor.rotation.x = -Math.PI * 0.5;
 	floor.position.y = 0;

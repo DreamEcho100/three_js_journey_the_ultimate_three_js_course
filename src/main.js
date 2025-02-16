@@ -1,10 +1,10 @@
-import { setup5 } from './lessons/5';
-import './style.css';
+import { setup5 } from "./lessons/5- haunted-house";
+import "./style.css";
 
-const appElement = /** @type {HTMLDivElement} */ document.querySelector('#app');
+const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
 
 if (!appElement) {
-	throw new Error('App element is not found');
+	throw new Error("App element is not found");
 }
 
 appElement.innerHTML = `
@@ -12,11 +12,11 @@ appElement.innerHTML = `
 `;
 
 const canvas = /** @type {HTMLCanvasElement | null} */ (
-	document.querySelector('canvas#webgl')
+	document.querySelector("canvas#webgl")
 );
 
 if (!canvas) {
-	throw new Error('Canvas is not found');
+	throw new Error("Canvas is not found");
 }
 
 setup5(canvas, appElement);
