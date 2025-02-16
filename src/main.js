@@ -1,4 +1,4 @@
-import { setup5 } from "./lessons/5- haunted-house";
+import { setup6_particles } from "./lessons/6- particles";
 import "./style.css";
 
 const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
@@ -19,4 +19,4 @@ if (!canvas) {
 	throw new Error("Canvas is not found");
 }
 
-setup5(canvas, appElement);
+setup6_particles(canvas, appElement);
