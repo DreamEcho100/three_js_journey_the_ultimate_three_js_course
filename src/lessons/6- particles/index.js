@@ -1,16 +1,11 @@
 import {
-	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Clock,
-	Color,
-	Mesh,
-	MeshBasicMaterial,
 	PerspectiveCamera,
 	Points,
 	PointsMaterial,
 	Scene,
-	SphereGeometry,
 	WebGLRenderer,
 } from "three";
 import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
@@ -95,7 +90,7 @@ export function setup6_particles(canvas, container) {
 	});
 
 	// NOTE:
-	// STOPPED at 25:22
+	// STOPPED at [25:22]
 
 	// Points
 	const points = new Points(pointsGeometry, pointsMaterial);
