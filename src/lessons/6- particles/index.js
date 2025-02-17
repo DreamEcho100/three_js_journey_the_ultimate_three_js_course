@@ -1,7 +1,10 @@
 import {
+	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Clock,
+	Mesh,
+	MeshBasicMaterial,
 	PerspectiveCamera,
 	Points,
 	PointsMaterial,
@@ -87,6 +90,8 @@ export function setup6_particles(canvas, container) {
 		transparent: true,
 		alphaMap: textures.pointsTexture,
 		alphaTest: 0.001,
+		// Disable depthTest to avoid rendering issues with transparency
+		depthTest: false,
 	});
 
 	// NOTE:
@@ -96,6 +101,10 @@ export function setup6_particles(canvas, container) {
 	const points = new Points(pointsGeometry, pointsMaterial);
 	scene.add(points);
 
+	const cube = new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial());
+	scene.add(cube);
+	cube.position.set(0, 0, 0);
+
 	function tick() {
 		const elapsedTime = clock.getElapsedTime();
 
@@ -103,6 +112,7 @@ export function setup6_particles(canvas, container) {
 		// points.position.x = Math.sin(elapsedTime);
 
 		// points.rotation.y = 0.1 * elapsedTime * Math.PI;
+		cube.rotation.y = 0.15 * elapsedTime * Math.PI;
 
 		controls.update();
 
