@@ -1,8 +1,10 @@
 import {
+    AdditiveBlending,
 	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Clock,
+	EllipseCurve,
 	Mesh,
 	MeshBasicMaterial,
 	PerspectiveCamera,
@@ -71,31 +73,36 @@ export function setup6_particles(canvas, container) {
 	// Geometry
 	const pointsGeometry = new BufferGeometry();
 
-	const POINTS_SIZE = 5000;
+	const POINTS_SIZE = 50000;
 	const positions = new Float32Array(POINTS_SIZE * 3);
+	const colors = new Float32Array(POINTS_SIZE * 3);
 	for (let i = 0; i < POINTS_SIZE * 3; i++) {
-		positions[i] = (Math.random() - 0.5) * 10;
+		const rand = Math.random();
+		positions[i] = (rand - 0.5) * 10;
+		colors[i] = rand;
 	}
 
 	pointsGeometry.setAttribute("position", new BufferAttribute(positions, 3));
+	// You should enable `vertixColors` on the `PointsMaterial`
+	pointsGeometry.setAttribute("color", new BufferAttribute(positions, 3));
 
 	// Material
 	const pointsMaterial = new PointsMaterial({
 		size: 0.1,
 		sizeAttenuation: true,
 
-		color: 0xff88cc,
+		// color: 0xff88cc,
 
 		// map: textures.pointsTexture,
 		transparent: true,
 		alphaMap: textures.pointsTexture,
-		alphaTest: 0.001,
+		// alphaTest: 0.001,
 		// Disable depthTest to avoid rendering issues with transparency
-		depthTest: false,
+		// depthTest: false,
+		// depthWrite: false,
+		blending: AdditiveBlending,
+		vertexColors: true,
 	});
-
-	// NOTE:
-	// STOPPED at [25:22]
 
 	// Points
 	const points = new Points(pointsGeometry, pointsMaterial);
@@ -112,7 +119,17 @@ export function setup6_particles(canvas, container) {
 		// points.position.x = Math.sin(elapsedTime);
 
 		// points.rotation.y = 0.1 * elapsedTime * Math.PI;
-		cube.rotation.y = 0.15 * elapsedTime * Math.PI;
+		cube.rotation.y = -0.15 * elapsedTime * Math.PI;
+
+		points.rotation.y = elapsedTime * 0.05;
+
+		for (let i = 0; i < POINTS_SIZE; i++) {
+			const i3 = i * 3;
+
+			const x = points.geometry.attributes.position.array[i3 + 0];
+			points.geometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x);
+		}
+		points.geometry.attributes.position.needsUpdate = true;
 
 		controls.update();
 
