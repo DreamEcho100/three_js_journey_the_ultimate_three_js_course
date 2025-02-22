@@ -13,6 +13,7 @@ import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
 import resizeOnContainerChange from "#utils/resize-on-container-change";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "lil-gui";
+import { guiAddMany } from "#utils/lil-gui-helpers.js";
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -64,8 +65,6 @@ export function setup7(canvas, container) {
 		},
 	});
 
-	const gui = new GUI();
-
 	const pointsParameters = {
 		count: 100_000,
 		size: 0.01,
@@ -112,44 +111,25 @@ export function setup7(canvas, container) {
 
 	let [galaxy, disposeGalaxy] = generateGalaxy();
 
-	gui
-		.add(pointsParameters, "count")
-		.min(100)
-		.max(1_000_000)
-		.step(100)
-		.onFinishChange(() => {
-			disposeGalaxy();
-			[galaxy, disposeGalaxy] = generateGalaxy();
-		});
-	gui
-		.add(pointsParameters, "size")
-		.min(0.001)
-		.max(0.1)
-		.step(0.001)
-		.onFinishChange(() => {
-			disposeGalaxy();
-			[galaxy, disposeGalaxy] = generateGalaxy();
-		});
-	gui
-		.add(pointsParameters, "radius")
-		.min(0.01)
-		.max(20)
-		.step(0.01)
-		.onFinishChange(() => {
-			disposeGalaxy();
-			[galaxy, disposeGalaxy] = generateGalaxy();
-		});
-	gui
-		.add(pointsParameters, "branches")
-		.min(2)
-		.max(20)
-		.step(1)
-		.onFinishChange(() => {
-			disposeGalaxy();
-			[galaxy, disposeGalaxy] = generateGalaxy();
-		});
+	function onFinishChange() {
+		disposeGalaxy();
+		[galaxy, disposeGalaxy] = generateGalaxy();
+	}
 
-	// NOTE: stopped at [22:22]
+	const gui = new GUI();
+	guiAddMany(
+		gui,
+		pointsParameters,
+		{
+			count: { min: 100, max: 1_000_000, step: 100 },
+			size: { min: 0.001, max: 0.1, step: 0.001 },
+			radius: { min: 0.01, max: 20, step: 0.01 },
+			branches: { min: 2, max: 20, step: 1 },
+		},
+		{ shared: { onFinishChange } },
+	);
+
+	// NOTE: stopped at [29:40]
 
 	function tick() {
 		const elapsedTime = clock.getElapsedTime();
