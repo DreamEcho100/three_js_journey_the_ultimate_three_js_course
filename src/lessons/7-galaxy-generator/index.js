@@ -3,6 +3,7 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Clock,
+	Color,
 	PerspectiveCamera,
 	Points,
 	PointsMaterial,
@@ -41,8 +42,7 @@ export function setup7(canvas, container) {
 
 	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio);
 	scene.add(camera);
-	camera.position.set(3, 3, 3);
-	// camera.position.set(2, 1, 4);
+	camera.position.set(0, 18, 5);
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.enableDamping = true;
@@ -65,21 +65,33 @@ export function setup7(canvas, container) {
 	});
 
 	const pointsParameters = {
-		count: 100_000,
+		count: 1_000_000,
 		size: 0.01,
 		radius: 5,
 		branches: 3,
-		spin: 1,
-		randomness: 0.2,
+		spin: -3,
+		pointToCenterRandomnessPower: 1.5,
+		randomness: 2,
+		randomnessPower: 4,
+		insideColor: 0xff6030,
+		outsideColor: 0x1b3984,
 	};
 
 	function generateGalaxy() {
 		const pointsGeometry = new BufferGeometry();
+
 		const pointsPositions = new Float32Array(pointsParameters.count * 3);
+		const pointsColors = new Float32Array(pointsParameters.count * 3);
+
+		const insideColor = new Color(pointsParameters.insideColor);
+		const outsideColor = new Color(pointsParameters.outsideColor);
 
 		for (let i = 0; i < pointsParameters.count; i++) {
 			const i3 = i * 3;
-			const radius = Math.random() * pointsParameters.radius;
+			const radius =
+				Math.pow(Math.random(), pointsParameters.pointToCenterRandomnessPower) *
+				pointsParameters.radius;
+			// Math.random() * pointsParameters.radius;
 			const spinAngle = radius * pointsParameters.spin;
 			const branchAngle =
 				// To get which branch the point is in
@@ -90,13 +102,15 @@ export function setup7(canvas, container) {
 				// This works because the branchAngle is between 0 and 1 and 2PI is a full circle angle
 				(Math.PI * 2);
 
-			if (i < 20) {
-				console.log(i, branchAngle);
-			}
-
-			const randomX = (Math.random() - 0.5) * pointsParameters.randomness;
-			const randomY = (Math.random() - 0.5) * pointsParameters.randomness;
-			const randomZ = (Math.random() - 0.5) * pointsParameters.randomness;
+			const randomX =
+				Math.pow(Math.random(), pointsParameters.randomnessPower) *
+				(Math.random() < 0.5 ? 1 : -1);
+			const randomY =
+				Math.pow(Math.random(), pointsParameters.randomnessPower) *
+				(Math.random() < 0.5 ? 1 : -1);
+			const randomZ =
+				Math.pow(Math.random(), pointsParameters.randomnessPower) *
+				(Math.random() < 0.5 ? 1 : -1);
 
 			pointsPositions[i3] =
 				// The `Math.cos(branchAngle + spinAngle)` is to make the points in a circle
@@ -109,23 +123,32 @@ export function setup7(canvas, container) {
 						// The `spinAngle` is to make the points in a spiral, to give them a distance from the center of the circle
 						spinAngle,
 				) *
-				// The `radius` is to make the points in a circle, to give them a distance from the center of the circle
-				radius + 
+					// The `radius` is to make the points in a circle, to give them a distance from the center of the circle
+					radius +
 				randomX;
 			pointsPositions[i3 + 1] = randomY; // (Math.random() - 0.5) * 0.015; // 0; // (Math.random() - 0.5) * 0.015;
-			pointsPositions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ; // (Math.random() - 0.5) * 0.015; // 0; // (Math.random() - 0.5) * 0.015;
+			pointsPositions[i3 + 2] =
+				Math.sin(branchAngle + spinAngle) * radius + randomZ; // (Math.random() - 0.5) * 0.015; // 0; // (Math.random() - 0.5) * 0.015;
+
+			const mixedColor = insideColor.clone();
+			mixedColor.lerp(outsideColor, radius / pointsParameters.radius);
+			pointsColors[i3] = mixedColor.r;
+			pointsColors[i3 + 1] = mixedColor.g;
+			pointsColors[i3 + 2] = mixedColor.b;
 		}
 
 		pointsGeometry.setAttribute(
 			"position",
 			new BufferAttribute(pointsPositions, 3),
 		);
+		pointsGeometry.setAttribute("color", new BufferAttribute(pointsColors, 3));
 
 		const pointsMaterial = new PointsMaterial({
 			size: pointsParameters.size,
 			sizeAttenuation: true,
 			depthWrite: false,
 			blending: AdditiveBlending,
+			vertexColors: true,
 		});
 
 		const points = new Points(pointsGeometry, pointsMaterial);
@@ -158,10 +181,30 @@ export function setup7(canvas, container) {
 			radius: { min: 0.01, max: 20, step: 0.01 },
 			branches: { min: 2, max: 20, step: 1 },
 			spin: { min: -5, max: 5, step: 0.001 },
-			randomness: { min: 2, max: 2, step: 0.001 },
+			randomness: { min: 2, max: 10, step: 0.001 },
+			randomnessPower: {
+				min: 1,
+				max: 10,
+				step: 0.001,
+				name: "randomness power",
+			},
+			pointToCenterRandomnessPower: {
+				min: 1,
+				max: 10,
+				step: 0.001,
+				name: "point to center randomness power",
+			},
 		},
 		{ shared: { onFinishChange } },
 	);
+	gui
+		.addColor(pointsParameters, "insideColor")
+		.name("inside color")
+		.onFinishChange(onFinishChange);
+	gui
+		.addColor(pointsParameters, "outsideColor")
+		.name("outside color")
+		.onFinishChange(onFinishChange);
 
 	// NOTE: stopped at [50:28]
 
