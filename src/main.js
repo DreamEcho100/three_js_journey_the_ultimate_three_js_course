@@ -1,4 +1,4 @@
-import { setup6_particles } from "./lessons/6- particles";
+import { setup7 } from "./lessons/7-galaxy-generator";
 import "./style.css";
 
 const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
@@ -19,4 +19,4 @@ if (!canvas) {
 	throw new Error("Canvas is not found");
 }
 
-setup6_particles(canvas, appElement);
+setup7(canvas, appElement);

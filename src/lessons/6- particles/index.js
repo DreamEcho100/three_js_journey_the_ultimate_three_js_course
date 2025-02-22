@@ -4,7 +4,6 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Clock,
-	EllipseCurve,
 	Mesh,
 	MeshBasicMaterial,
 	PerspectiveCamera,
