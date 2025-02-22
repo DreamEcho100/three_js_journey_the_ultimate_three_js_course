@@ -42,7 +42,7 @@ export function setup7(canvas, container) {
 
 	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio);
 	scene.add(camera);
-	camera.position.set(0, 18, 5);
+	camera.position.set(0, 3, 5);
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.enableDamping = true;
@@ -210,6 +210,8 @@ export function setup7(canvas, container) {
 
 	function tick() {
 		const elapsedTime = clock.getElapsedTime();
+
+		galaxy.rotation.y = elapsedTime * 0.1;
 
 		controls.update();
 
