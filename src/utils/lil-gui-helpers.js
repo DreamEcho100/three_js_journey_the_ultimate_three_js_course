@@ -40,25 +40,31 @@ export function guiAdd(gui, object, property, param) {
 
 /**
  * @template {object} Obj
+ *
  * @param {GUI} gui
  * @param {Obj} object
- * @param {{ [Prop in keyof Obj & string]: GUIAddParams}} properties
- * @param {{ 	shared?: GUIAddParams}} [options]
+ * @param {{ [PropKey in keyof Obj & string]?: GUIAddParams }} properties
+ * @param {{ 	shared?: GUIAddParams, }} [options]
  */
 export function guiAddMany(gui, object, properties, options) {
 	let controller;
 	const shared = options?.shared;
 
 	/** @type {keyof Obj & string} */
-	let property;
-	for (property in properties) {
+	let propertyKey;
+	for (propertyKey in properties) {
+		const property = properties[propertyKey];
+		if (typeof property === "undefined") {
+			continue;
+		}
+
 		if (shared) {
-			controller = guiAdd(gui, object, property, {
+			controller = guiAdd(gui, object, propertyKey, {
 				...shared,
-				...properties[property],
+				...property,
 			});
 		} else {
-			controller = guiAdd(gui, object, property, properties[property]);
+			controller = guiAdd(gui, object, propertyKey, property);
 		}
 	}
 
