@@ -10,7 +10,7 @@ import {
 	Scene,
 	WebGLRenderer,
 } from "three";
-import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
+import fullScreenOnDblClick from "#utils/full-screen-on-db-click";
 import resizeOnContainerChange from "#utils/resize-on-container-change";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "lil-gui";

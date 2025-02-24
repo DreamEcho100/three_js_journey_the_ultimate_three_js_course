@@ -1,10 +1,8 @@
 import {
-	BoxGeometry,
 	Clock,
 	ConeGeometry,
 	DirectionalLight,
 	Mesh,
-	MeshBasicMaterial,
 	MeshToonMaterial,
 	NearestFilter,
 	PerspectiveCamera,
@@ -13,7 +11,8 @@ import {
 	TorusKnotGeometry,
 	WebGLRenderer,
 } from "three";
-import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
+("db-click");
+import fullScreenOnDblClick from "#utils/full-screen-on-db-click";
 import resizeOnContainerChange from "#utils/resize-on-container-change";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
@@ -92,21 +91,48 @@ export function setup8(canvas, container) {
 	setupHTML(container);
 
 	/**
-	 * @type {{
+	 * @typedef {{
 	 * 	canvas: {
 	 * 		width: number;
 	 * 		height: number;
 	 * 		aspectRatio: number;
-	 * 	},
-	 * }}
+	 * 	};
+	 * 	cursor: {
+	 * 		x: number;
+	 * 		y: number;
+	 * 	}
+	 * }} ConfigBase
 	 */
-	const config = {
+
+	/**
+	 * @typedef {ConfigBase & { _original: ConfigBase }} Config
+	 */
+
+	/**
+	 * @template T
+	 *
+	 * @param {T} baseConfig
+	 * @returns {T & { _original: T }}
+	 */
+	function initConfig(baseConfig) {
+		return {
+			...baseConfig,
+			_original: structuredClone(baseConfig),
+		};
+	}
+
+	/** @type {Config} */
+	const config = initConfig({
 		canvas: {
-			width: 800,
-			height: 600,
-			aspectRatio: 800 / 600,
+			width: window.innerWidth,
+			height: window.innerHeight,
+			aspectRatio: window.innerWidth / window.innerHeight,
 		},
-	};
+		cursor: {
+			x: 0,
+			y: 0,
+		},
+	});
 
 	const scene = new Scene();
 
@@ -197,6 +223,10 @@ export function setup8(canvas, container) {
 		// mesh2.position.y = -objectsDistance * 1 + scrollY / config.canvas.height;
 		// mesh3.position.y = -objectsDistance * 2 + scrollY / config.canvas.height;
 	});
+	window.addEventListener("mousemove", (event) => {
+		config.cursor.x = event.clientX;
+		config.cursor.y = event.clientY;
+	});
 
 	let previousTime = 0;
 
@@ -208,7 +238,18 @@ export function setup8(canvas, container) {
 		// cube.position.y = Math.cos(elapsedTime);
 		// cube.position.x = Math.sin(elapsedTime);
 
+		const parallaxX =
+			// To get it relative to the canvas that is centered/fixed
+			config.cursor.x / config.canvas.width -
+			// To get it relative to the center of the canvas
+			0.5;
+
+		const parallaxY = config.cursor.y / config.canvas.height - 0.5;
+
 		camera.position.y = (-scrollY / config.canvas.height) * objectsDistance;
+
+		camera.position.x = parallaxX;
+		camera.position.y += parallaxY;
 
 		for (const mesh of sectionMeshes) {
 			mesh.rotation.x += deltaTime * 0.1;

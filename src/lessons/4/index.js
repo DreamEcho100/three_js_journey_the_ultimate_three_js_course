@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import fullScreenOnDblClick from "../../utils/full-screen-on-dblcick";
+import fullScreenOnDblClick from "../../utils/full-screen-on-db-click";
 import resizeOnContainerChange from "../../utils/resize-on-container-change";
 import GUI from "lil-gui";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";

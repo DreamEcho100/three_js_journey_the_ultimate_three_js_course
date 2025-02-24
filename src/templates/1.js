@@ -7,7 +7,7 @@ import {
 	Scene,
 	WebGLRenderer,
 } from "three";
-import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
+import fullScreenOnDblClick from "#utils/full-screen-on-db-click";
 import resizeOnContainerChange from "#utils/resize-on-container-change";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import Stats from "three/addons/libs/stats.module.js";
@@ -18,21 +18,43 @@ import Stats from "three/addons/libs/stats.module.js";
  */
 export function template1(canvas, container) {
 	/**
-	 * @type {{
+	 * @typedef {{
 	 * 	canvas: {
 	 * 		width: number;
 	 * 		height: number;
 	 * 		aspectRatio: number;
-	 * 	},
-	 * }}
+	 * 	}
+	 * }} ConfigBase
 	 */
-	const config = {
+
+	/**
+	 * @typedef {ConfigBase & { _original: ConfigBase }} Config
+	 */
+
+	/**
+	 * @template T
+	 *
+	 * @param {T} baseConfig
+	 * @returns {T & { _original: T }}
+	 */
+	function initConfig(baseConfig) {
+		return {
+			...baseConfig,
+			_original: structuredClone(baseConfig),
+		};
+	}
+
+	/** @type {Config} */
+	const config = initConfig({
 		canvas: {
-			width: 800,
-			height: 600,
-			aspectRatio: 800 / 600,
+			// width: 800,
+			// height: 600,
+			// aspectRatio: 800 / 600,
+			width: window.innerWidth,
+			height: window.innerHeight,
+			aspectRatio: window.innerWidth / window.innerHeight,
 		},
-	};
+	});
 
 	const scene = new Scene();
 
