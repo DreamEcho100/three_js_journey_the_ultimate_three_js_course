@@ -1,5 +1,5 @@
 import {
-    AdditiveBlending,
+	AdditiveBlending,
 	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
@@ -45,7 +45,7 @@ export function setup6_particles(canvas, container) {
 
 	const scene = new Scene();
 
-	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio);
+	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio, 0.1, 100);
 	scene.add(camera);
 	camera.position.z = 6;
 
@@ -126,16 +126,14 @@ export function setup6_particles(canvas, container) {
 			const i3 = i * 3;
 
 			const x = points.geometry.attributes.position.array[i3 + 0];
-			points.geometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x);
+			points.geometry.attributes.position.array[i3 + 1] = Math.sin(
+				elapsedTime + x,
+			);
 		}
 		points.geometry.attributes.position.needsUpdate = true;
 
 		controls.update();
-
-		if (elapsedTime % 0.016 > 0) {
-			renderer.render(scene, camera);
-		}
-
+		renderer.render(scene, camera);
 		requestAnimationFrame(tick);
 	}
 

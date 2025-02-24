@@ -1,4 +1,4 @@
-import { setup7 } from "./lessons/7-galaxy-generator";
+import { setup8 } from "./lessons/8-";
 import "./style.css";
 
 const appElement = /** @type {HTMLDivElement} */ document.querySelector("#app");
@@ -19,4 +19,4 @@ if (!canvas) {
 	throw new Error("Canvas is not found");
 }
 
-setup7(canvas, appElement);
+setup8(canvas, appElement);

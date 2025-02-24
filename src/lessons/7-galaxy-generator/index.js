@@ -14,7 +14,8 @@ import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
 import resizeOnContainerChange from "#utils/resize-on-container-change";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import GUI from "lil-gui";
-import { guiAddMany } from "#utils/lil-gui-helpers.js";
+import { guiAddMany, LIL_GUI_TYPES } from "#utils/lil-gui-helpers.js";
+import Stats from "three/addons/libs/stats.module.js";
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -40,7 +41,7 @@ export function setup7(canvas, container) {
 
 	const scene = new Scene();
 
-	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio);
+	const camera = new PerspectiveCamera(45, config.canvas.aspectRatio, 0.1, 100);
 	scene.add(camera);
 	camera.position.set(0, 3, 5);
 
@@ -51,6 +52,8 @@ export function setup7(canvas, container) {
 	renderer.setSize(config.canvas.width, config.canvas.height);
 
 	const clock = new Clock();
+	const stats = new Stats();
+	document.body.appendChild(stats.dom);
 
 	fullScreenOnDblClick(container);
 	resizeOnContainerChange({
@@ -194,19 +197,26 @@ export function setup7(canvas, container) {
 				step: 0.001,
 				name: "point to center randomness power",
 			},
+			insideColor: {
+				$$type: LIL_GUI_TYPES.COLOR,
+				name: "inside color",
+			},
+			outsideColor: {
+				$$type: LIL_GUI_TYPES.COLOR,
+				name: "outside color",
+			},
 		},
 		{ shared: { onFinishChange } },
 	);
-	gui
-		.addColor(pointsParameters, "insideColor")
-		.name("inside color")
-		.onFinishChange(onFinishChange);
-	gui
-		.addColor(pointsParameters, "outsideColor")
-		.name("outside color")
-		.onFinishChange(onFinishChange);
 
-	// NOTE: stopped at [50:28]
+	// gui
+	// 	.addColor(pointsParameters, "insideColor")
+	// 	.name("inside color")
+	// 	.onFinishChange(onFinishChange);
+	// gui
+	// 	.addColor(pointsParameters, "outsideColor")
+	// 	.name("outside color")
+	// 	.onFinishChange(onFinishChange);
 
 	function tick() {
 		const elapsedTime = clock.getElapsedTime();
@@ -214,11 +224,8 @@ export function setup7(canvas, container) {
 		galaxy.rotation.y = elapsedTime * 0.1;
 
 		controls.update();
-
-		if (elapsedTime % 0.016 > 0) {
-			renderer.render(scene, camera);
-		}
-
+		renderer.render(scene, camera);
+		stats.update();
 		requestAnimationFrame(tick);
 	}
 

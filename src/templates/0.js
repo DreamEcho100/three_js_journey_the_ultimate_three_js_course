@@ -5,11 +5,12 @@ import {
 	MeshBasicMaterial,
 	PerspectiveCamera,
 	Scene,
-	WebGLRenderer
-} from 'three';
-import fullScreenOnDblClick from '#utils/full-screen-on-dblcick';
-import resizeOnContainerChange from '#/utils/resize-on-container-change';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+	WebGLRenderer,
+} from "three";
+import fullScreenOnDblClick from "#utils/full-screen-on-dblcick";
+import resizeOnContainerChange from "#/utils/resize-on-container-change";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+import Stats from "three/addons/libs/stats.module.js";
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -29,8 +30,8 @@ export function setup5(canvas, container) {
 		canvas: {
 			width: 800,
 			height: 600,
-			aspectRatio: 800 / 600
-		}
+			aspectRatio: 800 / 600,
+		},
 	};
 
 	/**
@@ -40,23 +41,30 @@ export function setup5(canvas, container) {
 	 * 	controls: OrbitControls,
 	 * 	renderer: WebGLRenderer,
 	 * 	clock: Clock,
-	 * 	cube: Mesh
+	 * 	cube: Mesh,
+	 * 	stats: Stats,
 	 * ]} Entities
 	 */
-
-	const ENTITIES_SIZE = 6;
-	/** @type {Entities} */
-	const entities = /** @type {*} */ (new Array(ENTITIES_SIZE));
 	const SCENE_INDEX = 0;
 	const CAMERA_INDEX = 1;
 	const CONTROLS_INDEX = 2;
 	const RENDERER_INDEX = 3;
 	const CLOCK_INDEX = 4;
 	const CUBE_INDEX = 5;
+	const STATS_INDEX = 6;
+
+	const ENTITIES_SIZE = 7;
+	/** @type {Entities} */
+	const entities = /** @type {*} */ (new Array(ENTITIES_SIZE));
 
 	entities[SCENE_INDEX] = new Scene();
 
-	entities[CAMERA_INDEX] = new PerspectiveCamera(45, config.canvas.aspectRatio);
+	entities[CAMERA_INDEX] = new PerspectiveCamera(
+		45,
+		config.canvas.aspectRatio,
+		0.1,
+		100,
+	);
 	entities[SCENE_INDEX].add(entities[CAMERA_INDEX]);
 	entities[CAMERA_INDEX].position.y = 5;
 	entities[CAMERA_INDEX].position.z = -10;
@@ -69,6 +77,8 @@ export function setup5(canvas, container) {
 	entities[RENDERER_INDEX].setSize(config.canvas.width, config.canvas.height);
 
 	entities[CLOCK_INDEX] = new Clock();
+	entities[STATS_INDEX] = new Stats();
+	document.body.appendChild(entities[STATS_INDEX].dom);
 
 	fullScreenOnDblClick(container);
 	resizeOnContainerChange({
@@ -79,14 +89,14 @@ export function setup5(canvas, container) {
 			config.canvas.aspectRatio = aspectRatio;
 			config.canvas.width = width;
 			config.canvas.height = height;
-		}
+		},
 	});
 
 	entities[CUBE_INDEX] = new Mesh(
 		new BoxGeometry(1, 1, 1),
 		new MeshBasicMaterial({
-			color: 0xffff00
-		})
+			color: 0xffff00,
+		}),
 	);
 	entities[SCENE_INDEX].add(entities[CUBE_INDEX]);
 	entities[CUBE_INDEX].position.set(0, 0, 0);
@@ -98,14 +108,11 @@ export function setup5(canvas, container) {
 		entities[CUBE_INDEX].position.x = Math.sin(elapsedTime);
 
 		entities[CONTROLS_INDEX].update();
-
-		if (elapsedTime % 0.016 > 0) {
-			entities[RENDERER_INDEX].render(
-				entities[SCENE_INDEX],
-				entities[CAMERA_INDEX]
-			);
-		}
-
+		entities[RENDERER_INDEX].render(
+			entities[SCENE_INDEX],
+			entities[CAMERA_INDEX],
+		);
+		entities[STATS_INDEX].update();
 		requestAnimationFrame(tick);
 	}
 

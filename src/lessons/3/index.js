@@ -1,9 +1,9 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import fullScreenOnDblClick from '../../utils/full-screen-on-dblcick';
-import resizeOnContainerChange from '../../utils/resize-on-container-change';
-import GUI from 'lil-gui';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import fullScreenOnDblClick from "../../utils/full-screen-on-dblcick";
+import resizeOnContainerChange from "../../utils/resize-on-container-change";
+import GUI from "lil-gui";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -20,30 +20,30 @@ export function setup3(canvas, container) {
 export function setup3_2(canvas, container) {
 	const config = {
 		canvas: { width: 800, height: 600, aspectRatio: 800 / 600 },
-		sharedMaterialDebugUI: { sheenColor: 0x000000 }
+		sharedMaterialDebugUI: { sheenColor: 0x000000 },
 	};
 
 	const gui = new GUI();
 
 	const textureLoader = new THREE.TextureLoader();
-	const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg');
+	const doorAlphaTexture = textureLoader.load("/textures/door/alpha.jpg");
 	const doorAmbientOcclusionTexture = textureLoader.load(
-		'/textures/door/ambientOcclusion.jpg'
+		"/textures/door/ambientOcclusion.jpg",
 	);
-	const doorColorTexture = textureLoader.load('/textures/door/color.jpg');
-	const doorHeightTexture = textureLoader.load('/textures/door/height.jpg');
+	const doorColorTexture = textureLoader.load("/textures/door/color.jpg");
+	const doorHeightTexture = textureLoader.load("/textures/door/height.jpg");
 	const doorMetalnessTexture = textureLoader.load(
-		'/textures/door/metalness.jpg'
+		"/textures/door/metalness.jpg",
 	);
-	const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg');
+	const doorNormalTexture = textureLoader.load("/textures/door/normal.jpg");
 	const doorRoughnessTexture = textureLoader.load(
-		'/textures/door/roughness.jpg'
+		"/textures/door/roughness.jpg",
 	);
 	const doorEnvironmentMapTexture = textureLoader.load(
-		'/textures/environmentMap/2k.hdr'
+		"/textures/environmentMap/2k.hdr",
 	);
-	const gradientTexture = textureLoader.load('/textures/gradients/5.jpg');
-	const matcapTexture = textureLoader.load('/textures/matcaps/1.png');
+	const gradientTexture = textureLoader.load("/textures/gradients/5.jpg");
+	const matcapTexture = textureLoader.load("/textures/matcaps/1.png");
 
 	doorColorTexture.colorSpace = THREE.SRGBColorSpace;
 	matcapTexture.colorSpace = THREE.SRGBColorSpace;
@@ -106,7 +106,7 @@ export function setup3_2(canvas, container) {
 	//   .step(0.0001);
 
 	const sharedMaterial = new THREE.MeshPhysicalMaterial();
-	const sharedMaterialDebugUI = gui.addFolder('Shared Material');
+	const sharedMaterialDebugUI = gui.addFolder("Shared Material");
 	sharedMaterial.roughness = 1;
 	sharedMaterial.metalness = 1;
 	sharedMaterial.map = doorColorTexture;
@@ -121,12 +121,12 @@ export function setup3_2(canvas, container) {
 	sharedMaterial.transparent = true;
 	sharedMaterial.alphaMap = doorAlphaTexture;
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'roughness')
+		.add(sharedMaterial, "roughness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'metalness')
+		.add(sharedMaterial, "metalness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
@@ -135,13 +135,13 @@ export function setup3_2(canvas, container) {
 	// sharedMaterial.clearcoat = 1;
 	// sharedMaterial.clearcoatRoughness = 0;
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'clearcoat')
+		.add(sharedMaterial, "clearcoat")
 		.min(0)
 		.max(1)
 		.step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'clearcoatRoughness')
-		.name('Clearcoat Roughness')
+		.add(sharedMaterial, "clearcoatRoughness")
+		.name("Clearcoat Roughness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
@@ -149,47 +149,47 @@ export function setup3_2(canvas, container) {
 	// Sheen
 	// sharedMaterial.sheen = 1;
 	// sharedMaterial.sheenRoughness = 0;
-	sharedMaterialDebugUI.add(sharedMaterial, 'sheen').min(0).max(1).step(0.0001);
+	sharedMaterialDebugUI.add(sharedMaterial, "sheen").min(0).max(1).step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'sheenRoughness')
-		.name('Sheen Roughness')
+		.add(sharedMaterial, "sheenRoughness")
+		.name("Sheen Roughness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
 	sharedMaterialDebugUI
-		.addColor(config.sharedMaterialDebugUI, 'sheenColor')
-		.name('Sheen Colot')
+		.addColor(config.sharedMaterialDebugUI, "sheenColor")
+		.name("Sheen Colot")
 		.onChange(
 			/** @param {string} value  */
 			(value) => {
 				sharedMaterial.sheenColor.set(value);
-			}
+			},
 		);
 
 	// sharedMaterial.iridescence = 1;
 	// sharedMaterial.iridescenceIOR = 1;
 	// sharedMaterial.iridescenceThicknessRange = [100, 400];
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'iridescence')
-		.name('Sheen Roughness')
+		.add(sharedMaterial, "iridescence")
+		.name("Sheen Roughness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'iridescenceIOR')
-		.name('Iridescence IOR')
+		.add(sharedMaterial, "iridescenceIOR")
+		.name("Iridescence IOR")
 		.min(0)
 		.max(2.333)
 		.step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial.iridescenceThicknessRange, '0')
-		.name('Iridescence Thickness Range 0')
+		.add(sharedMaterial.iridescenceThicknessRange, "0")
+		.name("Iridescence Thickness Range 0")
 		.min(0)
 		.max(1000)
 		.step(1);
 	sharedMaterialDebugUI
-		.add(sharedMaterial.iridescenceThicknessRange, '1')
-		.name('Iridescence Thickness Range 1')
+		.add(sharedMaterial.iridescenceThicknessRange, "1")
+		.name("Iridescence Thickness Range 1")
 		.min(0)
 		.max(1000)
 		.step(1);
@@ -198,33 +198,33 @@ export function setup3_2(canvas, container) {
 	sharedMaterial.ior = 1.5;
 	sharedMaterial.thickness = 0.5;
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'transmission')
+		.add(sharedMaterial, "transmission")
 		.min(0)
 		.max(1)
 		.step(0.0001);
-	sharedMaterialDebugUI.add(sharedMaterial, 'ior').min(0).max(10).step(0.0001);
+	sharedMaterialDebugUI.add(sharedMaterial, "ior").min(0).max(10).step(0.0001);
 	sharedMaterialDebugUI
-		.add(sharedMaterial, 'thickness')
+		.add(sharedMaterial, "thickness")
 		.min(0)
 		.max(1)
 		.step(0.0001);
 
 	const sphere = new THREE.Mesh(
 		new THREE.SphereGeometry(0.5, 64, 64),
-		sharedMaterial
+		sharedMaterial,
 	);
 	sphere.position.x = -1.5;
 	scene.add(sphere);
 
 	const plane = new THREE.Mesh(
 		new THREE.PlaneGeometry(1, 1, 100, 100),
-		sharedMaterial
+		sharedMaterial,
 	);
 	scene.add(plane);
 
 	const torus = new THREE.Mesh(
 		new THREE.TorusGeometry(0.3, 0.2, 64, 128),
-		sharedMaterial
+		sharedMaterial,
 	);
 	torus.position.x = 1.5;
 	scene.add(torus);
@@ -239,14 +239,19 @@ export function setup3_2(canvas, container) {
 	// pontLight.position.z = 4;
 
 	const rgbeLoader = new RGBELoader();
-	rgbeLoader.load('/textures/environmentMap/2k.hdr', (environmentMap) => {
+	rgbeLoader.load("/textures/environmentMap/2k.hdr", (environmentMap) => {
 		environmentMap.mapping = THREE.EquirectangularReflectionMapping;
 
 		scene.background = environmentMap;
 		scene.environment = environmentMap;
 	});
 
-	const camera = new THREE.PerspectiveCamera(45, config.canvas.aspectRatio);
+	const camera = new THREE.PerspectiveCamera(
+		45,
+		config.canvas.aspectRatio,
+		0.1,
+		100,
+	);
 	scene.add(camera);
 	camera.position.x = -4;
 	camera.position.z = 4;
@@ -268,7 +273,7 @@ export function setup3_2(canvas, container) {
 			config.canvas.aspectRatio = aspectRatio;
 			config.canvas.width = width;
 			config.canvas.height = height;
-		}
+		},
 	});
 
 	const clock = new THREE.Clock();
@@ -307,7 +312,7 @@ export function setup3_1(canvas, container) {
 
 	const textureLoader = new THREE.TextureLoader();
 	const texture = textureLoader.load(
-		'/textures/Door_Wood_001_SD/Door_Wood_001_basecolor.jpg'
+		"/textures/Door_Wood_001_SD/Door_Wood_001_basecolor.jpg",
 	);
 	// const normalTexture = textureLoader.load(
 	//   "/textures/Door_Wood_001_SD/Door_Wood_001_normal.jpg",
@@ -342,8 +347,8 @@ export function setup3_1(canvas, container) {
 		new THREE.BoxGeometry(1, 1, 1),
 		new THREE.MeshBasicMaterial({
 			color: 0xffff00,
-			map: texture
-		})
+			map: texture,
+		}),
 	);
 	scene.add(cube);
 
@@ -368,7 +373,7 @@ export function setup3_1(canvas, container) {
 			aspectRatio = _aspectRatio;
 			sizes.width = width;
 			sizes.height = height;
-		}
+		},
 	});
 
 	function tick() {
